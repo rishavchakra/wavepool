@@ -1,8 +1,11 @@
+mod sdl;
 mod graphics;
-mod window;
+mod physics;
+mod ECS;
 
 fn main() {
-    let mut sdl = window::sdl::SdlWindow::init();
+    env_logger::init();
+    let mut sdl = sdl::SdlWindowData::init();
 
     'main: loop {
         // Event Handling
@@ -14,18 +17,6 @@ fn main() {
             }
         }
 
-        // Other stuff
-        unsafe {
-            gl::Clear(gl::COLOR_BUFFER_BIT);
-        }
-
         // window.gl_swap_window();
     }
-}
-
-// TODO: Move this somewhere, maybe to a library
-fn create_whitespace_cstring_with_len(len: usize) -> std::ffi::CString {
-    let mut buffer = Vec::with_capacity(len + 1);
-    buffer.extend([b' '].iter().cycle().take(len));
-    unsafe { std::ffi::CString::from_vec_unchecked(buffer) }
 }

@@ -2,13 +2,21 @@
 name = "wavepool"
 version = "0.1.0"
 edition = "2018"
+resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 gl = "0.14.0"
 
+image = "0.23"
+env_logger = "0.9"
+log = "0.4"
+pollster = "0.2"
+wgpu = "0.11"
+
+cgmath = "0.18"
 
 [dependencies.sdl2]
-version = "0.34"
-features = ["bundled"]
+version = "0.35"
+features = ["bundled", "raw-window-handle"]
