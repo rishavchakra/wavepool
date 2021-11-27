@@ -5,4 +5,5 @@
 
 pub struct Entity {
     id: usize,
+    name: String
 }

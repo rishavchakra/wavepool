@@ -1,7 +1,7 @@
 use cgmath::{num_traits::Float, Euler, Quaternion, Vector3};
 /**
  * Component for the ECS Entity Component System
- * Contains properties and their parameters
+ * Contains a property and its parameters
  */
 
 pub struct Component {
@@ -20,6 +20,11 @@ pub enum ComponentType {
     // Rendering
     Image(ParamImage),
     Mesh(ParamMesh),
+
+    // Scripts
+    Script(ParamScript),
+    Shader(ParamShader),
+    ShaderScript(ParamShaderScript),
 }
 
 pub enum CompRotation {
@@ -40,3 +45,14 @@ pub struct ParamSoftbody {
 pub struct ParamImage {}
 
 pub struct ParamMesh {}
+
+/*          Script Components           */
+pub struct ParamScript {
+    file: String
+}
+
+pub struct ParamShader {}
+
+pub struct ParamShaderScript {
+    file: String
+}
