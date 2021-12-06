@@ -5,7 +5,7 @@ use cgmath::{num_traits::Float, Euler, Quaternion, Vector3};
  */
 
 pub struct Component {
-    compType: ComponentType,
+    comp_type: ComponentType,
 }
 
 pub enum ComponentType {
