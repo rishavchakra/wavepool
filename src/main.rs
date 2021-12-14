@@ -1,7 +1,4 @@
 mod sdl;
-mod graphics;
-mod physics;
-mod ECS;
 
 fn main() {
     env_logger::init();

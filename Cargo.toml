@@ -4,10 +4,14 @@ version = "0.1.0"
 edition = "2018"
 resolver = "2"
 
+[lib]
+name="wavelib"
+path="src/lib/lib.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gl = "0.14.0"
+gl = "0.14"
 
 image = "0.23"
 env_logger = "0.9"
