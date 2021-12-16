@@ -8,16 +8,14 @@ mod tests {
 	pub fn test_ecs_controller_add_remove() {
 		let mut ecs_controller = ecs::Controller::new();
 
-		ecs_controller.add_entity(0);
-		assert_eq!(ecs_controller.num_entities(), 1);
+		ecs_controller.createEntity();
+		assert_eq!(ecs_controller.numEntities(), 1);
 
-		ecs_controller.remove_entity(0);
-		assert_eq!(ecs_controller.num_entities(), 0);
-
-
+		ecs_controller.createEntity();
+		assert_eq!(ecs_controller.numEntities(), 0);
 	}
 
-	#[test]
+	// #[test]
 	pub fn test() {
 
 	}

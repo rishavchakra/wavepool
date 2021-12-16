@@ -19,12 +19,16 @@ impl Controller {
     }
 
 	// Entity functions
-	pub fn createEntity(&self) -> Entity {
+	pub fn createEntity(&mut self) -> Entity {
 		self.entity_manager.createEntity()
 	}
 
-	pub fn destroyEntity(&self, entity: Entity) {
+	pub fn destroyEntity(&mut self, entity: Entity) {
 		self.entity_manager.destroyEntity(entity)
+	}
+
+	pub fn numEntities(&self) -> usize {
+		self.entity_manager.numEntities()
 	}
 
 	// Component functions
