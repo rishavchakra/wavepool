@@ -1,6 +1,7 @@
-use std::collections::{VecDeque, HashSet};
+use std::collections::{HashSet};
 
 pub type Entity = usize;
+const ENTITY_LIMIT: usize = 5000;
 
 pub struct EntityManager {
     entities: HashSet<Entity>,
@@ -15,18 +16,22 @@ impl EntityManager {
         }
     }
 
-    pub fn createEntity(&mut self) -> Entity {
-        let id = self.max_entities; // Should result in a unique entity id
-        self.entities.insert(id); // TODO: Make this unique
+    pub fn create_entity(&mut self) -> Option<Entity> {
+        if self.entities.len() >= ENTITY_LIMIT {
+            return None
+        }
+
+        let id = self.max_entities; // Should result in up to 2^32 unique entity ids
+        self.entities.insert(id);
         self.max_entities += 1; // Increments for the next entity created
-        id
+        Some(id)
     }
 
-    pub fn destroyEntity(&mut self, entity: Entity) {
+    pub fn destroy_entity(&mut self, entity: Entity) {
         self.entities.remove(&entity);
     }
 
-    pub fn numEntities(&self) -> usize {
+    pub fn num_entities(&self) -> usize {
         self.entities.len()
     }
 }

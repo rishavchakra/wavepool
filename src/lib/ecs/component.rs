@@ -2,6 +2,8 @@ use std::collections::HashSet;
 
 use cgmath::{Vector3, Quaternion};
 
+use super::{Entity};
+
 /**
  * Dynamic components aren't 'owned' by the entities,
  * and can thus be linked to other entities dynamically
@@ -35,6 +37,9 @@ pub struct ComponentManager {
 }
 
 impl ComponentManager {
+    pub fn create_component(&self, entity: Entity, component: ComponentDynamic) {
+        todo!()
+    }
 
 }
 
