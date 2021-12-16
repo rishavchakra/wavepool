@@ -4,7 +4,7 @@ A game engine built in rust
 It's not done yet.
 ___
 ## Features
-* ECS (Entity Component System) allows for modular component stacks and data-linked entity copying
+* ECS (Entity Component System) allows for modular and nested component stacks and data-linked entity instancing
 ___
 ## Building
 Wavepool uses the default Cargo build system for Rust.
