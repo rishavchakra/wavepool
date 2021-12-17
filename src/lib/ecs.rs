@@ -5,7 +5,7 @@ use component::ComponentManager;
 use entity::{Entity, EntityManager};
 use system::SystemManager;
 
-use self::component::ComponentDynamic;
+use self::component::{ComponentDynamic, Component};
 
 // Entity-Component-System architecture
 
@@ -34,7 +34,7 @@ impl Controller {
 	}
 
 	// Component functions
-	pub fn create_component(&self, entity: Entity, component: ComponentDynamic) {
+	pub fn create_component(&self, entity: Entity, component: Component) {
 		self.component_manager.create_component(entity, component)
 	}
 
