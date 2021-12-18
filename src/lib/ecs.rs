@@ -1,11 +1,13 @@
-mod component;
+pub mod component;
 mod entity;
 mod system;
+use std::rc::{Rc, Weak};
+
 use component::ComponentManager;
 use entity::{Entity, EntityManager};
 use system::SystemManager;
 
-use self::component::{ComponentDynamic, Component};
+use self::component::{Component, ComponentType, ComponentChain};
 
 // Entity-Component-System architecture
 
@@ -17,7 +19,11 @@ pub struct Controller {
 
 impl Controller {
     pub fn new() -> Controller {
-        todo!()
+		Controller {
+			entity_manager: EntityManager::new(),
+			component_manager: ComponentManager::new(),
+			system_manager: SystemManager::new()
+		}
     }
 
 	// Entity functions
@@ -34,8 +40,20 @@ impl Controller {
 	}
 
 	// Component functions
-	pub fn create_component(&self, entity: Entity, component: Component) {
-		self.component_manager.create_component(entity, component)
+	pub fn create_component(&mut self, entity: Entity, component_type: ComponentType) {
+		todo!()
+	}
+
+	pub fn register_component(&mut self, entity: Entity, component: Component) {
+		self.component_manager.register_component(entity, component)
+	}
+
+	pub fn get_entities_of_component(&self, component_type: ComponentType) -> Rc<Vec<Entity>> {
+		self.component_manager.get_entities_of_component(component_type)
+	}
+
+	pub fn get_components_of_entity(&self, entity: Entity) -> Option<Rc<ComponentChain>> {
+		self.component_manager.get_components_of_entity(entity)
 	}
 
 

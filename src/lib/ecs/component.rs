@@ -1,7 +1,5 @@
 use std::{
-    cell::RefCell,
-    collections::{HashMap, HashSet},
-    rc::Rc,
+    collections::HashMap, rc::{Rc, Weak}
 };
 
 use cgmath::{Quaternion, Vector3};
@@ -9,98 +7,117 @@ use cgmath::{Quaternion, Vector3};
 use super::Entity;
 
 pub enum Component {
-    Dynamic(ComponentDynamic),
-    Static(ComponentStatic),
-}
-
-/**
- * Dynamic components aren't 'owned' by the entities,
- * and can thus be linked to other entities dynamically
- */
-pub enum ComponentDynamic {
+    Name(String),
+    Transform(TransformCompData),
     Gravity(GravityCompData),
     Collision(CollisionCompData), // Collision mesh
-    Scripts(ScriptCompData),
+    Script(ScriptCompData),
     // ComponentChain(CompChainCompData) This could pose problems with reflexive linking, figure it out later
 }
 
-/**
- * Static components are 'owned' by the entities,
- * and are unique to the entity
- */
-pub enum ComponentStatic {
-    Name(String),
-    Transform(TransformCompData),
+#[derive(PartialEq, Eq, Hash)]
+pub enum ComponentType {
+    Name,
+    Transform,
+    Gravity,
+    Collision,
+    Script,
+    None
 }
 
-/* * * * * Component Chain Structs * * * * */
-pub struct ComponentStaticChain {
-    components: Vec<ComponentStatic>,
-}
+impl Component {
 
-pub struct ComponentDynamicChain {
-    components: Vec<ComponentDynamic>,
-}
-
-/* * * * * Component Chain Implementations * * * * */
-impl ComponentStaticChain {
-    pub fn insert(&mut self, component: ComponentStatic) {
-        self.components.push(component);
+    /**
+     * There has to be a better way of doing this. It works, but it's a little hacky
+     * TODO: Try to figure something out here.
+     */
+    pub fn get_type(&self) -> ComponentType {
+        match self {
+            Name => ComponentType::Name,
+            Transform => ComponentType::Transform,
+            Gravity => ComponentType::Gravity,
+            Collision => ComponentType::Collision,
+            Script => ComponentType::Script,
+            _ => ComponentType::None
+        }
     }
 }
 
-impl ComponentDynamicChain {
-    pub fn insert(&mut self, component: ComponentDynamic) {
-        self.components.push(component);
+/* * * * * Component Chain Structs * * * * */
+pub struct ComponentChain {
+    component_chain: Vec<Component>,
+}
+
+/* * * * * Component Chain Implementations * * * * */
+impl ComponentChain {
+    pub fn from_component(component: Component) -> Self {
+        Self {
+            component_chain: vec![component],
+        }
+    }
+
+    pub fn insert(&mut self, component: Component) {
+        self.component_chain.push(component)
     }
 }
 
 /* * * * * Component Manager Struct * * * * */
 pub struct ComponentManager {
-    /// Owned set of component chains that can be used and linked from
-    component_chains: HashSet<ComponentDynamicChain>,
-    /// Links the entities to their associated dynamic component chains
-    component_link_dynamic: HashMap<Entity, Rc<RefCell<ComponentDynamicChain>>>,
-    /// Links the entities to their associated static component chains
-    component_link_static: HashMap<Entity, Rc<RefCell<ComponentStaticChain>>>,
-    /// Links the components to the entities that contain them
-    entity_link: HashMap<Rc<Component>, Vec<Entity>>,
+    component_link: HashMap<Entity, ComponentChain>,
+    entity_link: HashMap<ComponentType, Vec<Entity>>,
 }
 
 /* * * * * Component Manager Implementation * * * * */
 impl ComponentManager {
-    pub fn new() -> ComponentManager {
-        ComponentManager {
-            component_chains: HashSet::new(),
-            component_link_dynamic: HashMap::new(),
-            component_link_static: HashMap::new(),
+    pub fn new() -> Self {
+        Self {
+            component_link: HashMap::new(),
             entity_link: HashMap::new(),
         }
     } // fn new
 
     /**
-     * Adds a component to the entity's component chain
+     * Creates a default component of the given type
      */
-    pub fn create_component(&mut self, entity: Entity, component: Component) {
-        match component {
-            Component::Dynamic(component_dynamic) => {
-                self.component_link_dynamic
-                    .get(&entity)
-                    .unwrap()
-                    .borrow_mut()
-                    .insert(component_dynamic);
-            }
+    pub fn create_component(&mut self, entity: Entity, component_type: ComponentType) {
 
-            Component::Static(component_static) => {
-                self.component_link_static
-                    .get(&entity)
-                    .unwrap()
-                    .borrow_mut()
-                    .insert(component_static);
-            }
-        } // match component type
+    }
+
+    /**
+     * Adds a component to an existing entity's component chain.
+     * If the entity doesn't have a component chain, creates a chain and adds the component to it.
+     */
+    pub fn register_component(&mut self, entity: Entity, component: Component) {
+        // Add to the components' connected entities
+        if let Some(entities) = self.entity_link.get_mut(&component.get_type()) {
+            entities.push(entity.clone());
+        } else {
+            self.entity_link.insert(component.get_type(), vec![entity]);
+        }
+
+        // Add to the entities' connection to the components
+        if let Some(component_chain) = self.component_link.get_mut(&entity) {
+            component_chain.insert(component);
+        } else {
+            self.component_link
+                .insert(entity, ComponentChain::from_component(component));
+        }
     } // fn create_component
-} // impl ComponentManager
+
+    pub fn get_entities_of_component(&self, component_type: ComponentType) -> Rc<Vec<Entity>> {
+        todo!()
+    }
+
+    pub fn get_components_of_entity(&self, entity: Entity) -> Option<Rc<ComponentChain>> {
+        match self.component_link.get(&entity) {
+            Some(component_chain) => {
+                // Some(Rc::from(component_chain))
+                None // TODO: Figure out how to fix this
+            }
+            None => None
+        }
+    }
+}
 
 /* * * * * Component Data Structs * * * * */
 pub struct TransformCompData {
@@ -117,7 +134,7 @@ impl Default for TransformCompData {
             scale_vec: Vector3::new(1., 1., 1.),
         }
     }
-}
+} // Default for Transform Component Data
 
 pub struct GravityCompData {
     g_vec: Vector3<f32>,
@@ -129,7 +146,7 @@ impl Default for GravityCompData {
             g_vec: Vector3::new(0., 0., -9.8),
         }
     }
-}
+} // Default for Gravity Component Data
 
 pub struct CollisionCompData {
     // Collision mesh
