@@ -11,16 +11,16 @@ path="src/lib/lib.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gl = "0.14"
+gl = "*"
 
-image = "0.23"
-env_logger = "0.9"
-log = "0.4"
-pollster = "0.2"
-wgpu = "0.11"
+image = "*"
+env_logger = "*"
+log = "*"
+pollster = "*"
+wgpu = "*"
 
-cgmath = "0.18"
+cgmath = "*"
 
 [dependencies.sdl2]
-version = "0.35"
+version = "*"
 features = ["bundled", "raw-window-handle"]
